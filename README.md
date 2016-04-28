@@ -83,7 +83,7 @@ and run the following:
 npm install
 ```
 
-Update your gulpfile.js with the following:
+Update your gulpfile.js with the following and be sure to scan it real quick and change any settings based on what you called your vue js project and what your server address is.
 
 ```
 /*
@@ -125,7 +125,7 @@ elixir(function(mix) {
 	} else {
 		BrowserSync.init();
     	mix.BrowserSync({
-	        proxy           : "testproject.app:8000/",
+	        proxy           : "superproject.app:8000/",
 	        logPrefix       : "Project Name",
 	        logConnections  : false,
 	        reloadOnRestart : false,
@@ -202,7 +202,7 @@ From the root of your project:
 Add the following to the ```welcome.blade.php``` just before the ```</body>```:
 
 ```
-{{-- <script src="{{ elixir("js/TestVueApp.js") }}"></script> --}}
+<script src="{{ elixir("js/TestVueApp.js") }}"></script>
 ```
 
 Add this in the ```<head>```:
