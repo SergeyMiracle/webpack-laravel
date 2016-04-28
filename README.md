@@ -202,7 +202,7 @@ From the root of your project:
 Add the following to the ```welcome.blade.php``` just before the ```</body>```:
 
 ```
-{{-- <script src="{{ elixir("js/TestVueApp.js") }}"></script> --}}
+<script src="{{ elixir("js/TestVueApp.js") }}"></script>
 ```
 
 Add this in the ```<head>```:
