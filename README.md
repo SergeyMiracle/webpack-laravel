@@ -169,7 +169,7 @@ So, let's assume you've followed my steps and are working from a fresh Laravel i
     </body>
 ```
 
-All that we've done here is add the ```<app></app>``` which will be the container for our Vue JS root component and a script tag that is pointing to a server that isn't running yet? What is that?! That *will be* our webpack server. So, let's get that up and running.
+All that we've done here is add the ```<app></app>``` which will be the container for our Vue JS root component and a script tag that is pointing to a server that isn't running yet. What is that?! That *will be* our webpack server. So, let's get that up and running.
 
 ### Pretend we're developing
 
@@ -189,7 +189,7 @@ Ok, but what if we want to take this a little further and live-update blade stuf
 
 Open another terminal and head to your project root and run ```gulp```
 
-This should (obnoxiously) open a new browser. What should be happening is that when you update any .php files (like a Blade file) Browsersync will inject updates into the browser. When you update your Vue application webpack will do the same. In this project I have simply embedded the app in the ```welcome.blade.php``` that ships with L5.
+This should open a new browser. What should be happening is that when you update any .php files (like a Blade file) Browsersync will inject updates into the browser. When you update your Vue application webpack will do the same.
 
 ### Production
 
@@ -213,9 +213,9 @@ Add this in the ```<head>```:
 
  These are using elixir for cache busting so you don't have to worry about cache on the server or in the client. 
 
-### Feedback
+### Feedback / Questions
 
-Certainly, I am not a webpack / elixir professional yet so I am certainly open to any feedback that folks have concerning these technologies.
+Certainly, I am not a webpack / elixir professional yet so I am certainly open to any feedback that folks have concerning these technologies. Please post any feedback to the issues and I'll see if I can give you a hand.
 
 
 ### Sources
