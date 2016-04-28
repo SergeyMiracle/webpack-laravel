@@ -1,57 +1,121 @@
-# vue-webpack-boilerplate
+#Vue-Cli Template for Larvel + Webpack + Hotreload (HMR)
 
-> A full-featured Webpack setup with hot-reload, lint-on-save, unit testing & css extraction.
+I had a really tough time getting my workflow rocking between Laravel and VueJS projects. I found myself building my VueJS projects independently in the Webpack dev server and then weirdly porting it into my Laravel projects. This was especially painful on existing projects where I was just trying to add a new component to the project.
 
-## Version Notice
+Here is a vue-cli template that will hopefully help you get off the ground with your VueJS projects. Certainly, any feedback is greatly appreciated. 
 
-If you are using `vue-cli@1.x`, it will be pulling the `master` branch of this template by default. If you are using `vue-cli@2.x`, it will be pulling the `dist` branch instead, which provides more configurable options thanks to new features in `vue-cli@2.x`. It is recommended to upgrade `vue-cli` as soon as you can.
+##Install Laravel
 
-## Documentation
+I won't go into all the steps to make this happen [Laravel Install Docs](https://laravel.com/docs/5.2) but essentially, here are the steps I take with [Homestead](https://laravel.com/docs/5.2/homestead).
 
-Common topics are discussed in the [docs](http://vuejs-templates.github.io/webpack). Make sure to read it!
-
-## Usage
-
-This is a project template for [vue-cli](https://github.com/vuejs/vue-cli). **It is recommended to use npm 3+ for a more efficient dependency tree.**
-
-``` bash
-$ npm install -g vue-cli
-$ vue init webpack my-project
-$ cd my-project
-$ npm install
-$ npm run dev
+```
+laravel new superproject (or whatever your project name is)
 ```
 
-## What's Included
+##Configure Laravel
 
-- `npm run dev`: first-in-class development experience.
-  - Webpack + `vue-loader` for single file Vue components.
-  - State preserving hot-reload
-  - State preserving compilation error overlay
-  - Lint-on-save with ESLint
-  - Source maps
+I then create a database for this project and edit the ```.env``` file to point to the database by changing ```DB_DATABASE=homestead``` to ```DB_DATABASE=superdatabaseformyproject```
 
-- `npm run build`: Production ready build.
-  - JavaScript minified with [UglifyJS](https://github.com/mishoo/UglifyJS2).
-  - HTML minified with [html-minifier](https://github.com/kangax/html-minifier).
-  - CSS across all components extracted into a single file and minified with [cssnano](https://github.com/ben-eb/cssnano).
-  - All static assets compiled with version hashes for efficient long-term caching, and a production `index.html` is auto-generated with proper URLs to these generated assets.
+##Configure Host Machine
 
-- `npm run unit`: Unit tests run in PhantomJS with [Karma](http://karma-runner.github.io/0.13/index.html) + [Mocha](http://mochajs.org/) + [karma-webpack](https://github.com/webpack/karma-webpack).
-  - Supports ES2015 in test files.
-  - Supports all webpack loaders.
-  - Easy mock injection.
+Edit your host file so you can render the site:
 
-- `npm run e2e`: End-to-end tests with [Nightwatch](http://nightwatchjs.org/).
-  - Run tests in multiple browsers in parallel.
-  - Works with one command out of the box:
-    - Selenium and chromedriver dependencies automatically handled.
-    - Automatically spawns the Selenium server.
+```sudo vi /etc/hosts```
 
-### Fork It And Make Your Own
+And add the following
 
-You can fork this repo to create your own boilerplate, and use it with `vue-cli`:
+```127.0.0.1               superproject.app```
 
-``` bash
-vue init username/repo my-project
+Edit your Homestead.yaml 
+
+```vi ~/.homestead/Homestead.yaml```
+
+Add the following to your list of sites:
+
 ```
+    - map: superproject.app
+      to: /home/vagrant/Code/superproject/public
+```
+
+##Install Laravel NPM Dependencies
+
+Navigate to your projects root Laravel directory (probably ```~/Code/superproject```) . Update your ```package.json``` with the following:
+
+```
+{
+  "private": true,
+  "devDependencies": {
+    "babel-core": "^6.7.7",
+    "gulp": "^3.9.1",
+    "laravel-elixir-browsersync2": "^0.1.0",
+    "laravel-elixir-webpack": "^1.0.1"
+  },
+  "dependencies": {
+    "bootstrap-sass": "^3.0.0",
+    "laravel-elixir": "^5.0.0",
+    "laravel-elixir-webpack-ex": "0.0.4"
+  }
+}
+```
+
+and run the following:
+
+```
+npm install
+```
+
+Update your gulpfile.js with the following:
+
+```
+/*
+ |--------------------------------------------------------------------------
+ | Elixir Asset Management
+ |--------------------------------------------------------------------------
+ |
+ | Elixir provides a clean, fluent API for defining some basic Gulp tasks
+ | for your Laravel application. By default, we are compiling the Sass
+ | file for our application, as well as publishing vendor resources.
+ |
+ */
+
+var elixir = require('laravel-elixir');
+var BrowserSync = require('laravel-elixir-browsersync2');
+
+// Just making paths a little shorter
+var jsAssetsPath = './resources/assets/js'
+
+require('laravel-elixir-webpack-ex');
+
+elixir(function(mix) {
+    mix.sass('app.scss');
+
+    if(elixir.config.production) {
+	    // This is going to use the production configuration
+	    // which will place the build files in /public/js/static/
+	    mix.webpack({
+	    		TestVueApp: '/vue-example/src/main.js',
+	    	},
+	    	require(jsAssetsPath + '/vue-example/build/webpack.prod.conf.js')
+	    );
+
+	    // Let's let elixer take care of the hashing
+	    mix.version([
+	    	'public/js/css/TestVueApp.css',
+	    	'public/js/TestVueApp.js'
+	    ])
+	} else {
+		BrowserSync.init();
+    	mix.BrowserSync({
+	        proxy           : "testproject.app:8000/",
+	        logPrefix       : "Project Name",
+	        logConnections  : false,
+	        reloadOnRestart : false,
+	        notify          : false,
+	        files			: ["**/*.php"]
+	    });
+	}
+});
+```
+
+##Create new Vue-CLI project using this template
+
