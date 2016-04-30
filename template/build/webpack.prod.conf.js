@@ -12,7 +12,9 @@ module.exports = merge(baseWebpackConfig, {
   },
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {
-    path: config.build.assetsRoot + '/js',
+    path: config.build.assetsRoot,
+    publicPath: "/",
+    filename: "js/[name].js"
   },
   vue: {
     loaders: utils.cssLoaders({
@@ -34,6 +36,6 @@ module.exports = merge(baseWebpackConfig, {
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     // extract css into its own file
-    new ExtractTextPlugin(utils.assetsPath('../css/[name].css')),
+    new ExtractTextPlugin(utils.assetsPath('css/[name].css')),
   ]
 })
