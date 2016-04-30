@@ -72,7 +72,8 @@ Navigate to your projects root Laravel directory (probably ```~/Code/superprojec
   "dependencies": {
     "bootstrap-sass": "^3.0.0",
     "laravel-elixir": "^5.0.0",
-    "laravel-elixir-webpack-ex": "0.0.4"
+    // "laravel-elixir-webpack-ex": "0.0.4" // This has been removed pending some pull requests for both webpack config overrides and known bugs in the defined version of webpack-stream. For now use the fork below
+    "laravel-elixir-webpack-ex": "dolbex/laravel-elixir-webpack-ex"
   }
 }
 ```
