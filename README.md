@@ -98,35 +98,46 @@ Update your gulpfile.js with the following and be sure to scan it real quick and
  |
  */
 
-var elixir = require('laravel-elixir');
-var BrowserSync = require('laravel-elixir-browsersync2');
-
 // Just making paths a little shorter
 var jsAssetsPath = './resources/assets/js'
 
+// Requirements
+var BrowserSync = require('laravel-elixir-browsersync2');
+var elixir = require('laravel-elixir');
+var gulp = require('gulp');
+
 require('laravel-elixir-webpack-ex');
+
+
+// Elixir extension to clean up for multiple Vue projects
+elixir.extend('buildVueProject', function(mix, projectName, entryPath, configPath) {
+
+  var project = {}
+  project[projectName] = entryPath
+  mix.webpack(project, require(configPath), elixir.config.publicPath);
+
+});
 
 elixir(function(mix) {
     mix.sass('app.scss');
 
     if(elixir.config.production) {
-	    // This is going to use the production configuration
-	    // which will place the build files in /public/js/static/
-	    mix.webpack({
-	    		TestVueApp: '/vue-example/src/main.js',
-	    	},
-	    	require(jsAssetsPath + '/vue-example/build/webpack.prod.conf.js')
+	    mix.buildVueProject(
+	    	mix,
+	    	'test-vue-app',
+	    	'/my-vue-project/src/main.js',
+	    	jsAssetsPath + '/my-vue-project/build/webpack.prod.conf.js'
 	    );
 
 	    // Let's let elixer take care of the hashing
 	    mix.version([
-	    	'public/js/css/TestVueApp.css',
-	    	'public/js/TestVueApp.js'
+	    	'public/js/css/test-vue-app.css',
+	    	'public/js/test-vue-app.js'
 	    ])
 	} else {
 		BrowserSync.init();
     	mix.BrowserSync({
-	        proxy           : "superproject.app:8000/",
+	        proxy           : "testproject.app:8000/",
 	        logPrefix       : "Project Name",
 	        logConnections  : false,
 	        reloadOnRestart : false,
