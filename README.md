@@ -225,10 +225,43 @@ Add this in the ```<head>```:
 
  These are using elixir for cache busting so you don't have to worry about cache on the server or in the client. 
 
+### Adding in SASS Node Dependencies
+
+If you want to add in something like bourbon / neat (a sass library) to your project you'll need to edit the webpack.base.conf.js file inside your vue js project. 
+
+In the case of bourbon / neat add the following requirements to the top of the file.
+
+```
+...
+var projectRoot = path.resolve(__dirname, '../')
+
+var bourbon = require('bourbon').includePaths;
+var neat = require('bourbon-neat').includePaths;
+
+module.exports = {
+...
+```
+
+Then add the sassloader section in the module:
+
+```
+  ...
+  resolveLoader: {
+    fallback: [path.join(__dirname, '../node_modules')]
+  },
+  sassLoader: {
+      includePaths: [bourbon, neat]
+  },
+  module: {
+  ...
+```
+
+Don't forget to restart your webpack dev server when you're done editing the config file.
+
+
 ### Feedback / Questions
 
 Certainly, I am not a webpack / elixir professional yet so I am certainly open to any feedback that folks have concerning these technologies. Please post any feedback to the issues and I'll see if I can give you a hand.
-
 
 ### Sources
 
