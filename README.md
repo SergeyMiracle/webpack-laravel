@@ -273,3 +273,4 @@ Certainly, I am not a webpack / elixir professional yet so I am certainly open t
 * [Jeremy Dagorn's Blog on setup for something similar with React](http://jeremydagorn.com/posts/how_to_setup_react-hot-loader_in_your_laravel_application)
 * [Matt Stauffer's Elixir + Vue Post](http://blog.tighten.co/setting-up-your-first-vuejs-site-using-laravel-elixir-and-vueify)
 * [Amazing Answer by @vincentfretin with regards to multiple entry points - thank you sir.](https://github.com/gaearon/react-transform-boilerplate/issues/47#issuecomment-151909080)
+* [Installing Boubon Github issue on](https://github.com/vuejs/vue-loader/issues/95)
