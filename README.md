@@ -119,10 +119,9 @@ elixir.extend('buildVueProject', function(mix, projectName, entryPath, configPat
 });
 
 elixir(function(mix) {
-    mix.sass('app.scss');
-
     if(elixir.config.production) {
-	    mix.buildVueProject(
+    	    mix.sass('app.scss')
+	    .buildVueProject(
 	    	mix,
 	    	'test-vue-app',
 	    	'/my-vue-project/src/main.js',
@@ -136,7 +135,8 @@ elixir(function(mix) {
 	    ])
 	} else {
 		BrowserSync.init();
-    	mix.BrowserSync({
+		mix.sass('app.scss')
+    	        .BrowserSync({
 	        proxy           : "testproject.app:8000/",
 	        logPrefix       : "Project Name",
 	        logConnections  : false,
