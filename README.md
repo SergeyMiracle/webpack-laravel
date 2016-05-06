@@ -102,12 +102,10 @@ Update your gulpfile.js with the following and be sure to scan it real quick and
 var jsAssetsPath = './resources/assets/js'
 
 // Requirements
-var BrowserSync = require('laravel-elixir-browsersync2');
 var elixir = require('laravel-elixir');
 var gulp = require('gulp');
 
 require('laravel-elixir-webpack-ex');
-
 
 // Elixir extension to clean up for multiple Vue projects
 elixir.extend('buildVueProject', function(mix, projectName, entryPath, configPath) {
@@ -123,27 +121,24 @@ elixir(function(mix) {
         mix.sass('app.scss')
         .buildVueProject(
             mix,
-            'test-vue-app',
+            'my-vue-project',
             '/my-vue-project/src/main.js',
             jsAssetsPath + '/my-vue-project/build/webpack.prod.conf.js'
         );
 
         // Let's let elixer take care of the hashing
         mix.version([
-            'public/js/css/test-vue-app.css',
-            'public/js/test-vue-app.js'
+            'public/css/my-vue-project.css',
+            'public/js/my-vue-project.js'
         ])
     } else {
-        BrowserSync.init();
-        
         mix.sass('app.scss')
-        .BrowserSync({
-            proxy           : "testproject.app:8000/",
-            logPrefix       : "Project Name",
+        .browserSync({
+            proxy           : "superproject.app:8000/",
+            logPrefix       : "Super Project",
             logConnections  : false,
             reloadOnRestart : false,
-            notify          : false,
-            files           : ["**/*.php"]
+            notify          : false
         });
     }
 });
