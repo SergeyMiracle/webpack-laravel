@@ -105,7 +105,7 @@ Update your gulpfile.js with the following and be sure to scan it real quick and
 
  const PATH = './resources/assets/js'
 
-require('laravel-elixir-webpack-ex');
+require('laravel-elixir-webpack-ex')
 
  // Elixir extension to clean up for multiple Vue projects
  elixir.extend('buildVueProject', function (mix, projectName, entryPath, configPath) {
