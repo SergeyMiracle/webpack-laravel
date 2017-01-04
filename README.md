@@ -4,7 +4,7 @@ I had a really tough time getting my workflow rocking between Laravel and VueJS 
 
 I love Evan's approach and setup that you get with vue-cli. I'm sure there are many ways to do this but this is how I get started when building components that are going to live and communicate with a Laravel application. It allows me to build in real time, maintain Vue's data-store state' and just have less headaches all around.
 
-This vue-cli template will hopefully help you get off the ground with your VueJS projects. Certainly, any feedback is greatly appreciated. 
+This vue-cli template will hopefully help you get off the ground with your VueJS projects. Certainly, any feedback is greatly appreciated.
 
 ##Requirements
 
@@ -16,7 +16,7 @@ You will need the following installed - If you're new I'll try and walk you thro
 
 ####Recommended
 
-* [Laravel](https://laravel.com/docs/5.2) Command Line Installer 
+* [Laravel](https://laravel.com/docs/5.2) Command Line Installer
 * Vue Dev-tools extension for Chrome
 
 ##Install Laravel
@@ -41,7 +41,7 @@ And add the following
 
 ```127.0.0.1               superproject.app```
 
-Edit your Homestead.yaml 
+Edit your Homestead.yaml
 
 ```vi ~/.homestead/Homestead.yaml```
 
@@ -63,17 +63,20 @@ Navigate to your projects root Laravel directory (probably ```~/Code/superprojec
 ```
 {
   "private": true,
+  "scripts": {
+    "prod": "gulp --prod",
+    "dev": "gulp watch"
+  },
   "devDependencies": {
     "babel-core": "^6.7.7",
     "gulp": "^3.9.1",
+    "laravel-elixir": "^6.0.0-9",
     "laravel-elixir-browsersync2": "^0.1.0",
     "laravel-elixir-webpack": "^1.0.1"
+
   },
   "dependencies": {
-    "bootstrap-sass": "^3.0.0",
-    "laravel-elixir": "^5.0.0",
-    // "laravel-elixir-webpack-ex": "0.0.4" // This has been removed pending some pull requests for both webpack config overrides and known bugs in the defined version of webpack-stream. For now use the fork below
-    "laravel-elixir-webpack-ex": "dolbex/laravel-elixir-webpack-ex"
+    "laravel-elixir-webpack-ex": "SergeyMiracle/laravel-elixir-webpack-ex"
   }
 }
 ```
@@ -81,7 +84,7 @@ Navigate to your projects root Laravel directory (probably ```~/Code/superprojec
 and run the following:
 
 ```
-npm install
+yarn install
 ```
 
 Update your gulpfile.js with the following and be sure to scan it real quick and change any settings based on what you called your vue js project and what your server address is.
@@ -98,65 +101,53 @@ Update your gulpfile.js with the following and be sure to scan it real quick and
  |
  */
 
-// Just making paths a little shorter
-var jsAssetsPath = './resources/assets/js'
+ const elixir = require('laravel-elixir')
 
-// Requirements
-var elixir = require('laravel-elixir');
-var gulp = require('gulp');
+ const PATH = './resources/assets/js'
 
 require('laravel-elixir-webpack-ex');
 
-// Elixir extension to clean up for multiple Vue projects
-elixir.extend('buildVueProject', function(mix, projectName, entryPath, configPath) {
+ // Elixir extension to clean up for multiple Vue projects
+ elixir.extend('buildVueProject', function (mix, projectName, entryPath, configPath) {
+   let project = {}
+   project[projectName] = entryPath
+   mix.webpack(project, require(configPath), elixir.config.publicPath)
+ })
 
-  var project = {}
-  project[projectName] = entryPath
-  mix.webpack(project, require(configPath), elixir.config.publicPath);
-
-});
-
-elixir(function(mix) {
-    if(elixir.config.production) {
-        mix.sass('app.scss')
-        .buildVueProject(
-            mix,
-            'my-vue-project',
-            '/my-vue-project/src/main.js',
-            jsAssetsPath + '/my-vue-project/build/webpack.prod.conf.js'
-        );
-
-        // Let's let elixer take care of the hashing
-        mix.version([
-            'public/css/my-vue-project.css',
-            'public/js/my-vue-project.js'
-        ])
-    } else {
-        mix.sass('app.scss')
-        .browserSync({
-            proxy           : "superproject.app:8000/",
-            logPrefix       : "Super Project",
-            logConnections  : false,
-            reloadOnRestart : false,
-            notify          : false
-        });
-    }
-});
+ elixir(function (mix) {
+   if (elixir.config.production) {
+     mix.buildVueProject(
+       mix,
+       'client',
+       '/client/src/main.js',
+       PATH + '/client/build/webpack.prod.conf.js'
+     )
+   } else {
+     mix.webpack('app.js')
+       .browserSync({
+         proxy: 'project.dev:8000',
+         logPrefix: 'Project',
+         logConnections: false,
+         reloadOnRestart: false,
+         notify: false
+       })
+   }
+ })
 ```
 
 ##Create new Vue-CLI project using this template
 
-Ok, so at this point we could go to http://localhost:8000 and see the Laravel 5 welcome screen. Great. Now, let's get some awesome Vue JS in there! 
+Ok, so at this point we could go to http://localhost:8000 and see the Laravel 5 welcome screen. Great. Now, let's get some awesome Vue JS in there!
 
 Head to (and you probably have to make this directory on a new project) ```~/Code/superproject/resources/assets/js/```
 
 Bang out this command and change ```my-vue-project``` to whatever your Vue JS project name is. Remember, this is the component or widget that is going to live within your laravel app. It could be a map, slider, game, or, maybe it's the entire site accessing Laravel API endpoints you are going to make.
 
-```vue init dolbex/webpack-laravel  my-vue-project```
+```vue init SergeyMiracle/webpack-laravel  my-vue-project```
 
 Call the directory that was just made (in my case ```my-vue-project```) and run:
 
-```npm install```
+```yarn install```
 
 ##Inserting your Vue JS app in your blade template
 
@@ -187,13 +178,13 @@ Ok, so we're going to have three servers running at the same time. Homestead is 
 
 If you're not already there go to on your main machine (again, not Homestead): ```~/Code/superproject/resources/assets/js/vue-example``` and run ```npm run dev```
 
-Now, if all you're working on is your Vue app you could go to ```http://superproject.app:8000``` and see the Vue logo next to the Laravel 5 logo. If you open an editor and edit ```~/Code/superproject/resources/js/vue-example/src/App.vue``` and make a change you should see it live update in the browser. 
+Now, if all you're working on is your Vue app you could go to ```http://superproject.app:8000``` and see the Vue logo next to the Laravel 5 logo. If you open an editor and edit ```~/Code/superproject/resources/js/vue-example/src/App.vue``` and make a change you should see it live update in the browser.
 
 You can test this by installing Vue Dev Tools extension for Chrome and pressing the button. You'll see on the App component has a 'test' property that will change from false to true (I had some redraw issues on dev tools. Just click another component and click back - this is something I need to figure out). Now change something in your ```{project-root}/resources/assets/js/vue-example/src/App.js``` file and the display will update but the state of the app will remain.
 
 ##### Elixir / Browsersync
 
-Ok, but what if we want to take this a little further and live-update blade stuff as well? Not a problem. 
+Ok, but what if we want to take this a little further and live-update blade stuff as well? Not a problem.
 
 Open another terminal and head to your project root and run ```gulp```
 
@@ -219,11 +210,11 @@ Add this in the ```<head>```:
 <link rel="stylesheet" href="{{ elixir("js/css/TestVueApp.css") }}">
 ```
 
- These are using elixir for cache busting so you don't have to worry about cache on the server or in the client. 
+ These are using elixir for cache busting so you don't have to worry about cache on the server or in the client.
 
 ### Adding in SASS Node Dependencies
 
-If you want to add in something like bourbon / neat (a sass library) to your project you'll need to edit the webpack.base.conf.js file inside your vue js project. 
+If you want to add in something like bourbon / neat (a sass library) to your project you'll need to edit the webpack.base.conf.js file inside your vue js project.
 
 In the case of bourbon / neat add the following requirements to the top of the file.
 
