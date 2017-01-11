@@ -10,7 +10,7 @@ module.exports = {
   },
   output: {
     path: config.build.assetsRoot,
-    publicPath: "http://localhost:8080/",
+    publicPath: 'http://localhost:' + config.dev.port + '/',
     filename: '[name].js'
   },
   resolve: {
