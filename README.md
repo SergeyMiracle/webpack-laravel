@@ -76,7 +76,8 @@ Navigate to your projects root Laravel directory (probably ```~/Code/superprojec
 
   },
   "dependencies": {
-    "laravel-elixir-webpack-ex": "SergeyMiracle/laravel-elixir-webpack-ex"
+    "laravel-elixir-webpack-ex": "SergeyMiracle/laravel-elixir-webpack-ex",
+    "yargs": "^6.6.0"
   }
 }
 ```
@@ -102,37 +103,48 @@ Update your gulpfile.js with the following and be sure to scan it real quick and
  */
 
  const elixir = require('laravel-elixir')
-
+ const args = require('yargs').argv
  const PATH = './resources/assets/js'
 
-require('laravel-elixir-webpack-ex')
+ require('laravel-elixir-webpack-ex')
 
  // Elixir extension to clean up for multiple Vue projects
- elixir.extend('buildVueProject', function (mix, projectName, entryPath, configPath) {
+ elixir.extend('buildVue', function (mix, projectName, entryPath, configPath, publicPath = null) {
    let project = {}
    project[projectName] = entryPath
-   mix.webpack(project, require(configPath), elixir.config.publicPath)
+   publicPath = publicPath || elixir.config.publicPath
+   mix.webpack(project, require(configPath), publicPath)
  })
 
- elixir(function (mix) {
-   if (elixir.config.production) {
-     mix.buildVueProject(
+ if (args.client) {
+   elixir(function (mix) {
+     mix.buildVue(
        mix,
        'client',
        '/client/src/main.js',
-       PATH + '/client/build/webpack.prod.conf.js'
+       PATH + '/client/build/webpack.prod.conf.js',
+       'public/client/'
      )
-   } else {
-     mix.webpack('app.js')
-       .browserSync({
-         proxy: 'project.dev:8000',
-         logPrefix: 'Project',
-         logConnections: false,
-         reloadOnRestart: false,
-         notify: false
-       })
-   }
- })
+   })
+ }
+
+ if (args.admin) {
+   elixir(function (mix) {
+     mix.buildVue(
+       mix,
+       'admin',
+       '/admin/src/main.js',
+       PATH + '/admin/build/webpack.prod.conf.js',
+       'public/admin/'
+     )
+   })
+ }
+
+ if (args.scripts) {
+   elixir(function (mix) {
+     mix.scriptsIn('resources/assets/custom/js')
+   })
+ }
 ```
 
 ##Create new Vue-CLI project using this template
